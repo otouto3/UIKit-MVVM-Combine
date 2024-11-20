@@ -7,8 +7,12 @@
 
 import UIKit
 import SnapKit
+import Combine
 
 class ViewController: UIViewController {
+    private var cancellables = Set<AnyCancellable>()
+    
+    private let viewModel = ViewModel(model: Model())
     private let idTextField = {
         $0.borderStyle = .roundedRect
         return $0
@@ -35,6 +39,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         setupView()
+        setupBinding()
     }
     
     private func setupView() {
@@ -51,6 +56,38 @@ class ViewController: UIViewController {
             $0.top.equalTo(stackView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
+    }
+    
+    private func setupBinding() {
+        idTextField.addTarget(
+            self,
+            action: #selector(textFieldEditingChanged),
+            for: .editingChanged
+        )
+        
+        passwordTextField.addTarget(
+            self,
+            action: #selector(textFieldEditingChanged),
+            for: .editingChanged
+        )
+        
+        viewModel.$validationText
+            .compactMap {$0}
+            .receive(on: RunLoop.main)
+            .assign(to: \.text, on: validationLabel)
+            .store(in: &cancellables)
+        
+        viewModel.$validationColor
+              .receive(on: RunLoop.main)
+              .assign(to: \.textColor, on: validationLabel)
+              .store(in: &cancellables)
+    }
+    
+    @objc func textFieldEditingChanged(sender: UITextField) {
+        viewModel.idPasswordChanged(
+            id: idTextField.text,
+            password: passwordTextField.text
+        )
     }
 }
 
