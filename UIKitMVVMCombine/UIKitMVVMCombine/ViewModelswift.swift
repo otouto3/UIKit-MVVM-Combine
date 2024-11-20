@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 final class ViewModel: ObservableObject {
-    @Published var validationText = ""
+    @Published var validationText = "idとpasswordを入力してください"
     @Published var validationColor = UIColor.black
     
     private let model: ModelProtocol

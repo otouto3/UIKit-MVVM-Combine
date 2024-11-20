@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     
     private let validationLabel: UILabel = {
         $0.font = .systemFont(ofSize: 18)
+        $0.textAlignment = .center
         return $0
     }(UILabel())
     
@@ -33,10 +34,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setup()
+        setupView()
     }
     
-    private func setup() {
+    private func setupView() {
         view.backgroundColor = .white
         view.addSubview(stackView)
         view.addSubview(validationLabel)
@@ -47,7 +48,8 @@ class ViewController: UIViewController {
         }
         
         validationLabel.snp.makeConstraints {
-            $0.top.equalTo(stackView).offset(16)
+            $0.top.equalTo(stackView.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
 }
